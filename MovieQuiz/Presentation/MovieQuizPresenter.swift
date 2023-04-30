@@ -2,7 +2,7 @@
 //  MovieQuizPresenter.swift
 //  MovieQuiz
 //
-//  Created by Mir on 30.04.2023.
+//  Created by Mir on 29.04.2023.
 //
 
 import UIKit
