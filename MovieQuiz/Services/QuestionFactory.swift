@@ -36,8 +36,8 @@ final class QuestionFactory: QuestionFactoryProtocol {
     }
     
     func requestNextQuestion() {
-        DispatchQueue.global().async { [ weak self ] in
-            guard let self = self else { return }
+        DispatchQueue.global().async { [weak self] in
+            guard let self else { return }
             let index = (0..<self.movies.count).randomElement() ?? 0
             
             guard let movie = self.movies[safe: index] else { return }
@@ -47,25 +47,22 @@ final class QuestionFactory: QuestionFactoryProtocol {
             do {
                 imageData = try Data(contentsOf: movie.resizedImageURL)
             } catch {
-                DispatchQueue.main.async { [ weak self ] in
-                    self?.delegate?.didFailToLoadImage()
-                }
                 print("Failed to load image")
             }
             
-            let randomRating = Float.random(in: 6...9)
             let rating = Float(movie.rating) ?? 0
+            let randomRating = Int.random(in: 4...9)
             
-            let text = "Рейтинг этого фильма \nбольше чем \(Int(randomRating))?"
-            let correctAnswer = rating > randomRating
+            let text = "Рейтинг этого фильма больше чем \(randomRating)?"
+            let correctAnswer = rating > Float(randomRating)
             
             let question = QuizQuestion(image: imageData,
                                         text: text,
                                         correctAnswer: correctAnswer)
             
-            DispatchQueue.main.async { [ weak self ] in
-                guard let self = self else { return }
-                self.delegate?.didRecieveNextQuestion(question: question)
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.delegate?.didReceiveNextQuestion(question: question)
             }
         }
     }
