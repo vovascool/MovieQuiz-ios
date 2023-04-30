@@ -25,6 +25,7 @@ final class AlertPresenter: AlertPresenterProtocol {
             model.completion?()
             self?.delegate?.dismiss(animated: true, completion: nil)
         }
+        alert.view.accessibilityIdentifier = "Game results"
         alert.addAction(action)
         delegate?.present(alert, animated: true, completion: nil)
     }
