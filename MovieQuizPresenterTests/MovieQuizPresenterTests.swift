@@ -29,10 +29,6 @@ final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
         
     }
     
-    func blockButton() {
-        
-    }
-    
     func showNetworkError(message: String) {
         
     }

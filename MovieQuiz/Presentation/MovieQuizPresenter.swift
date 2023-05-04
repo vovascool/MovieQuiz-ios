@@ -13,8 +13,9 @@ protocol MovieQuizViewControllerProtocol: AnyObject {
     func highlightImageBorder(isCorrectAnswer: Bool)
     func showLoadingIndicator()
     func hideLoadingIndicator()
-    func blockButton()
     func showNetworkError(message: String)
+    func makeButtonsActive()
+    func makeButtonsInactive()
 }
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
@@ -25,9 +26,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var questionFactory: QuestionFactoryProtocol?
     private weak var viewController: MovieQuizViewControllerProtocol?
     private var currentQuestion: QuizQuestion?
-    private let questionsAmount: Int = 10
-    private var currentQuestionIndex: Int = 0
-    private var correctAnswers: Int = 0
+    private let questionsAmount = 10
+    private var currentQuestionIndex = 0
+    private var correctAnswers = 0
     
     init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
@@ -35,8 +36,9 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                                                                   decoder: JSONDecoder(),
                                                                   encoder: JSONEncoder())
         questionFactory = QuestionFactory(delegate: self, moviesLoader: MoviesLoader())
-        questionFactory?.loadData()
+        
         viewController.showLoadingIndicator()
+        questionFactory?.loadData()
     }
     
     // MARK: - Private Methods
@@ -46,20 +48,18 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
         
         let givenAnswer = isYes
-        
         proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     
     private func proceedWithAnswer(isCorrect: Bool) {
         didAnswer(isCorrectAnswer: isCorrect)
         
+        viewController?.makeButtonsInactive()
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
-        viewController?.blockButton()
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self else { return }
             self.proceedToNextQuestionOrResults()
-            self.viewController?.blockButton()
+            self.viewController?.makeButtonsActive()
         }
     }
     

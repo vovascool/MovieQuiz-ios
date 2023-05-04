@@ -18,7 +18,9 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     override func viewDidLoad() {
         super.viewDidLoad()
         presenter = MovieQuizPresenter(viewController: self)
+        imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 20
+        showLoadingIndicator()
     }
     
     // MARK: - Actions
@@ -33,16 +35,30 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     // MARK: - Internal Methods
     func highlightImageBorder(isCorrectAnswer: Bool) {
-        imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
     }
     
     func show(quiz step: QuizStepViewModel) {
+        hideLoadingIndicator()
         imageView.layer.borderColor = UIColor.clear.cgColor
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
+    }
+    
+    func makeButtonsInactive() {
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
+        yesButton.setTitleColor(UIColor.ypGray, for: .normal)
+        noButton.setTitleColor(UIColor.ypGray, for: .normal)
+    }
+    
+    func makeButtonsActive() {
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
+        yesButton.setTitleColor(UIColor.black, for: .normal)
+        noButton.setTitleColor(UIColor.black, for: .normal)
     }
     
     func showFinalResults() {
@@ -56,16 +72,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         }
         let alert = AlertPresenter()
         alert.show(view: self, alertModel: alertModel)
-    }
-    
-    func blockButton() {
-        if yesButton.isEnabled || noButton.isEnabled {
-            yesButton.isEnabled = false
-            noButton.isEnabled = false
-        } else {
-            yesButton.isEnabled = true
-            noButton.isEnabled = true
-        }
     }
     
     func showLoadingIndicator() {
