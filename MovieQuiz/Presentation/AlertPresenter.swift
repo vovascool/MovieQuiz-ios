@@ -7,25 +7,21 @@
 
 import UIKit
 
-final class AlertPresenter: AlertPresenterProtocol {
-    weak var delegate: AlertPresenterDelegate?
+final class AlertPresenter {
     
-    init(delegate: AlertPresenterDelegate?) {
-        self.delegate = delegate
-    }
-    
-    func showAlert(model: AlertModel) {
+    func show(view controller: UIViewController, alertModel: AlertModel) {
+        let alertController = UIAlertController(title: alertModel.title,
+                                                message: alertModel.message,
+                                                preferredStyle: .alert)
         
-        let alert = UIAlertController(title: model.title,
-                                      message: model.message,
-                                      preferredStyle: .alert)
+        let action = UIAlertAction(title: alertModel.buttonText,
+                                   style: .default,
+                                   handler: { _ in
+            alertModel.completion()
+        })
         
-        let action = UIAlertAction(title: model.buttonText,
-                                   style: .default) { [weak self] _ in
-            model.completion?()
-            self?.delegate?.dismiss(animated: true, completion: nil)
-        }
-        alert.addAction(action)
-        delegate?.present(alert, animated: true, completion: nil)
+        alertController.view.accessibilityIdentifier = "Game results"
+        alertController.addAction(action)
+        controller.present(alertController, animated: true)
     }
 }
